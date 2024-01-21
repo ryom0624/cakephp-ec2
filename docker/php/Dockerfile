@@ -12,4 +12,6 @@ RUN apk --no-cache update \
     # && pecl install xdebug \
     # && docker-php-ext-enable xdebug
 
+RUN composer install
+
 WORKDIR /var/www
