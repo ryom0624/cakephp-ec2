@@ -1,0 +1,11 @@
+{
+  "name": "cakephp-ec2",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "app",
+  "workspaceFolder": "/var/www",
+  "forwardPorts": [
+    9003
+  ]
+}

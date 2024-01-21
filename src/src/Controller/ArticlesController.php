@@ -2,7 +2,7 @@
 
 // src/Controller/ArticlesController.php
 
-namespace App\Controller;
+namespace App\Controller;use Cake\Log\Log;
 
 class ArticlesController extends AppController
 {
@@ -21,7 +21,10 @@ class ArticlesController extends AppController
 
   public function view($slug = null)
   {
-    $article = $this->Articles->findBySlug($slug)->firstOrFail();
+    $article = $this->Articles
+      ->findBySlug($slug)
+      ->contain('Tags')
+      ->firstOrFail();
     $this->set(compact('article'));
   }
 
@@ -40,12 +43,20 @@ class ArticlesController extends AppController
       }
       $this->Flash->error(__('Unable to add your article.'));
     }
+
+    $tags = $this->Articles->Tags->find('list')->all();
+
+    $this->set('tags', $tags);
+
     $this->set('article', $article);
   }
 
   public function edit($slug)
   {
-    $article = $this->Articles->findBySlug($slug)->firstOrFail();
+    $article = $this->Articles
+      ->findBySlug($slug)
+      ->contain('Tags')
+      ->firstOrFail();
     if ($this->request->is(['post', 'put'])) {
       $this->Articles->patchEntity($article, $this->request->getData());
       if($this->Articles->save($article)) {
@@ -54,6 +65,11 @@ class ArticlesController extends AppController
       }
       $this->Flash->error(__('Unable to update your article.'));
     }
+
+    $tags = $this->Articles->Tags->find('list')->all();
+
+    $this->set('tags', $tags);
+
     $this->set('article', $article);
   }
 
@@ -64,5 +80,20 @@ class ArticlesController extends AppController
       $this->Flash->success(__('The {0} article has been deleted.', $article->title));
       return $this->redirect(['action'=>'index']);
     }
+  }
+
+  public function tags() {
+
+    $tags = $this->request->getParam('pass');
+    $articles = $this->Articles->find('tagged', [
+      'tags' => $tags
+      ])
+      ->all();
+
+    // $this->log(var_export($articles, true));
+    $this->set([
+      'articles' => $articles,
+      'tags' => $tags
+    ]);
   }
 }

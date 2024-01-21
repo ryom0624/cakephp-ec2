@@ -8,6 +8,8 @@ RUN apk --no-cache update \
     && apk --no-cache add icu-dev zlib-dev libzip-dev mariadb mariadb-client vim \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl zip pdo pdo_mysql mysqli \
-    && docker-php-ext-enable intl
+    && docker-php-ext-enable intl \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug
 
 WORKDIR /var/www
